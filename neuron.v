@@ -26,7 +26,7 @@ module neuron #(parameter layerNo=0,neuronNo=0,numWeight=784,dataWidth=16,sigmoi
     input           rst,
     input [dataWidth-1:0]    myinput,
     input           myinputValid,
-    input           weightValid,
+    input           weightValid,           //input weight is very great
     input           biasValid,
     input [31:0]    weightValue,
     input [31:0]    biasValue,
@@ -66,7 +66,8 @@ module neuron #(parameter layerNo=0,neuronNo=0,numWeight=784,dataWidth=16,sigmoi
             w_addr <= {addressWidth{1'b1}};
             wen <=0;
         end
-        else if(weightValid & (config_layer_num==layerNo) & (config_neuron_num==neuronNo))
+        else if(weightValid & (config_layer_num==layerNo) & (config_neuron_num==neuronNo))    // 1. It will identify the layer in which it is present.
+                                                                                              // 2.	The number th position, in which the neuron is present in that layer.
         begin
             w_in <= weightValue;
             w_addr <= w_addr + 1;
@@ -111,10 +112,10 @@ module neuron #(parameter layerNo=0,neuronNo=0,numWeight=784,dataWidth=16,sigmoi
     
     always @(posedge clk)
     begin
-        mul  <= $signed(myinputd) * $signed(w_out);
+        mul  <= $signed(myinputd) * $signed(w_out);              // the input weight is multiplied with base weight
     end
     
-    
+    // MULTIPLIER WORKS
     always @(posedge clk)
     begin
         if(rst|outvalid)
